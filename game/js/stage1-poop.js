@@ -89,6 +89,7 @@ export class Stage1Poop {
     ctx.fillRect(0, 0, cw, ch);
 
     // うんこ描画
+    ctx.fillStyle = '#FFF';
     for (const p of this.poops) {
       ctx.font = `${p.size}px serif`;
       ctx.textAlign = 'center';
