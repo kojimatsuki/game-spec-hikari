@@ -66,6 +66,7 @@ export class TitleScene {
     ctx.font = 'bold 16px sans-serif';
     ctx.fillStyle = '#FFC0CB';
     ctx.fillText('〜吸い込まれた世界〜', cw / 2, ch * 0.69);
+    ctx.shadowColor = 'transparent';
     ctx.shadowBlur = 0;
 
     // スタートボタン

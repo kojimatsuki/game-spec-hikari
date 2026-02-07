@@ -31,6 +31,8 @@ export class Stage4Race {
     this.isOnGround = true;
     this.isHolding = false;
     this.holdTime = 0;
+    this.slowTimer = 0;
+    this._jumpedThisTouch = false;
 
     // 障害物・アイテム
     this.objects = [];
@@ -84,6 +86,15 @@ export class Stage4Race {
       this.holdTime += dt;
     }
 
+    // スロー回復
+    if (this.slowTimer > 0) {
+      this.slowTimer -= dt;
+      if (this.slowTimer <= 0) {
+        this.speed = SCROLL_SPEED;
+        hikari.setExpression('😊');
+      }
+    }
+
     // 移動
     this.distance += this.speed * dt;
 
@@ -124,7 +135,7 @@ export class Stage4Race {
           this.speed = Math.max(100, this.speed - 30);
           this.showMessage(HIKARI_REACTIONS.stage4.poop);
           hikari.setExpression('😱');
-          setTimeout(() => { this.speed = SCROLL_SPEED; hikari.setExpression('😊'); }, 1500);
+          this.slowTimer = 1.5;
           this.objects.splice(i, 1);
         } else if (obj.type === 'goal') {
           this.cleared = true;
@@ -210,6 +221,8 @@ export class Stage4Race {
       this.game.completeStage(4);
       return;
     }
+    // onDragEndでジャンプ済みなら無視
+    if (this._jumpedThisTouch) return;
     if (this.isOnGround) {
       this.jump(false);
     }
@@ -218,11 +231,13 @@ export class Stage4Race {
   onDragStart() {
     this.isHolding = true;
     this.holdTime = 0;
+    this._jumpedThisTouch = false;
   }
 
   onDragEnd() {
     if (this.isHolding && this.isOnGround) {
       this.jump(this.holdTime > 0.2);
+      this._jumpedThisTouch = true;
     }
     this.isHolding = false;
   }

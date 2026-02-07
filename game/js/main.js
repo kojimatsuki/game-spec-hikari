@@ -84,6 +84,14 @@ class Game {
 
     const onUp = (e) => {
       e.preventDefault();
+      // エラー復帰
+      if (this._hasError) {
+        this._hasError = false;
+        this.transition.active = false;
+        this.setScene(new TitleScene(this));
+        this._downPos = null;
+        return;
+      }
       const pos = getPos(e);
       if (this.scene?.onDragEnd) this.scene.onDragEnd(pos.x, pos.y);
       // クリック判定
@@ -151,21 +159,36 @@ class Game {
   }
 
   loop(time) {
+    requestAnimationFrame((t) => this.loop(t));
+
     const dt = Math.min(0.05, (time - this.lastTime) / 1000);
     this.lastTime = time;
 
     // クリア
     this.ctx.clearRect(0, 0, this.cw, this.ch);
 
-    // 更新
-    if (this.scene?.update) this.scene.update(dt);
-    this.transition.update(dt);
+    try {
+      // 更新
+      if (this.scene?.update) this.scene.update(dt);
+      this.transition.update(dt);
 
-    // 描画
-    if (this.scene?.draw) this.scene.draw(this.ctx);
-    this.transition.draw(this.ctx, this.cw, this.ch);
-
-    requestAnimationFrame((t) => this.loop(t));
+      // 描画
+      if (this.scene?.draw) this.scene.draw(this.ctx);
+      this.transition.draw(this.ctx, this.cw, this.ch);
+    } catch (e) {
+      console.error('Game loop error:', e);
+      // エラー時はシーンをリセットしてステージ選択に戻す
+      this.ctx.fillStyle = '#1a0533';
+      this.ctx.fillRect(0, 0, this.cw, this.ch);
+      this.ctx.fillStyle = '#FF4444';
+      this.ctx.font = 'bold 16px sans-serif';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText('エラーが発生しました', this.cw / 2, this.ch / 2 - 10);
+      this.ctx.fillStyle = '#FFF';
+      this.ctx.font = '14px sans-serif';
+      this.ctx.fillText('タップでメニューに戻る', this.cw / 2, this.ch / 2 + 20);
+      this._hasError = true;
+    }
   }
 
   saveState() {

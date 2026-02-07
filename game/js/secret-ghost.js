@@ -24,9 +24,13 @@ export class SecretGhost {
     this.colorTimer = 0;
     this.colorInterval = 3;
 
-    // グリッドベース
-    this.cellW = 0;
-    this.cellH = 0;
+    // グリッドベース（初期値をコンストラクタで計算）
+    const cw = game.cw;
+    const ch = game.ch;
+    this._gridX = 20;
+    this._gridY = 70;
+    this.cellW = (cw - 40) / GRID_COLS;
+    this.cellH = (ch - 140) / GRID_ROWS;
 
     // プレイヤー
     this.playerCol = 0;
@@ -159,16 +163,13 @@ export class SecretGhost {
 
   draw(ctx) {
     const { cw, ch } = this.game;
-    // 背景
+    // 背景（不透明に塗ってから色をオーバーレイ）
+    ctx.fillStyle = '#0a001e';
+    ctx.fillRect(0, 0, cw, ch);
     ctx.fillStyle = this.bgColor;
-    ctx.globalAlpha = 0.3;
+    ctx.globalAlpha = 0.2;
     ctx.fillRect(0, 0, cw, ch);
     ctx.globalAlpha = 1;
-    const grad = ctx.createLinearGradient(0, 0, 0, ch);
-    grad.addColorStop(0, 'rgba(26,0,51,0.8)');
-    grad.addColorStop(1, 'rgba(0,0,30,0.9)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, cw, ch);
 
     // グリッド計算
     const gridX = 20;

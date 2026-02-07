@@ -143,13 +143,14 @@ export class Transition {
 
   update(dt) {
     if (!this.active) return;
-    this.progress += dt * 2;
-    if (!this.fadeIn && this.progress >= 1) {
-      this.fadeIn = true;
-      this.progress = 1;
-      if (this.callback) this.callback();
-    }
-    if (this.fadeIn) {
+    if (!this.fadeIn) {
+      this.progress += dt * 2;
+      if (this.progress >= 1) {
+        this.fadeIn = true;
+        this.progress = 1;
+        if (this.callback) this.callback();
+      }
+    } else {
       this.progress -= dt * 2;
       if (this.progress <= 0) {
         this.active = false;
