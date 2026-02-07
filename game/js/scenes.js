@@ -222,7 +222,9 @@ export class StageSelectScene {
 
       const isCleared = cleared.has(stage.id);
       const isSecret = stage.id === 7;
-      const isLocked = !isSecret && !isCleared && stage.id > 1 && !cleared.has(stage.id - 1);
+      const stageIdx = STAGES.findIndex(s => s.id === stage.id);
+      const prevId = stageIdx > 0 ? STAGES[stageIdx - 1].id : null;
+      const isLocked = !isSecret && !isCleared && stageIdx > 0 && prevId !== null && !cleared.has(prevId);
 
       let color = stage.colorTheme.bg;
       if (isLocked) color = '#555';
@@ -329,7 +331,7 @@ export class StageClearScene {
       sfxTap();
       const cleared = this.game.state.clearedStages;
       const allCleared = STAGES.every(s => cleared.has(s.id));
-      if (allCleared && (this.stageId === 6 || this.stageId === 8)) {
+      if (allCleared) {
         this.game.setScene(new EndingScene(this.game));
       } else {
         this.game.setScene(new StageSelectScene(this.game));

@@ -59,6 +59,14 @@ export const STAGES = [
     colorTheme: { bg: '#1a0033', accent: '#FF4444' },
     goal: null,
   },
+  {
+    id: 9,
+    name: 'おなら宇宙飛行',
+    sprite: 'fart-cloud',
+    description: 'おならで宇宙を飛べ！月を目指せ！',
+    colorTheme: { bg: '#0a0a2e', accent: '#44FF44' },
+    goal: null,
+  },
 ];
 
 export const SECRET_STAGE = {
@@ -114,6 +122,17 @@ export const HIKARI_REACTIONS = {
     enemyAttack: '来る！防御して！',
     lose: 'うぅ…やられちゃった…',
     clear: '全集中・完全勝利！かっこいい〜！',
+  },
+  stage9: {
+    start: 'おならで宇宙へ出発〜！ぷぅ〜！',
+    fart: 'ぷっ！とんでけ〜！',
+    poop: 'ぎゃー！うんこ隕石！くさすぎ！',
+    hit: 'いたた！隕石にぶつかった！',
+    quarter: '宇宙が見えてきた！',
+    half: '半分きた！おしりが限界〜！',
+    almost: 'もうすぐ月だ！がんばれおしり！',
+    lose: 'おなら切れで墜落〜…',
+    clear: '月に到着！おなら最強！',
   },
 };
 

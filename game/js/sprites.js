@@ -1848,6 +1848,176 @@ register('breath-circle', (ctx, x, y, size) => {
 });
 
 // ============================================================
+// ステージ9: おなら宇宙飛行
+// ============================================================
+
+register('fart-cloud', (ctx, x, y, size) => {
+  const r = size / 2;
+  // メインの雲（黄緑〜茶色のもくもく）
+  const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+  grad.addColorStop(0, 'rgba(180,200,50,0.8)');
+  grad.addColorStop(0.5, 'rgba(140,160,30,0.5)');
+  grad.addColorStop(1, 'rgba(100,80,20,0)');
+  ctx.fillStyle = grad;
+  // もくもく3つの円
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x - r * 0.35, y + r * 0.1, r * 0.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + r * 0.3, y - r * 0.1, r * 0.35, 0, Math.PI * 2);
+  ctx.fill();
+  // 渦巻き線
+  ctx.strokeStyle = 'rgba(100,120,20,0.4)';
+  ctx.lineWidth = Math.max(1, r * 0.06);
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.2, 0, Math.PI * 1.5);
+  ctx.stroke();
+});
+
+register('meteorite', (ctx, x, y, size) => {
+  const r = size / 2;
+  // 本体（ゴツゴツした岩）
+  ctx.fillStyle = '#8B7355';
+  ctx.beginPath();
+  ctx.moveTo(x, y - r * 0.6);
+  ctx.lineTo(x + r * 0.5, y - r * 0.3);
+  ctx.lineTo(x + r * 0.6, y + r * 0.1);
+  ctx.lineTo(x + r * 0.3, y + r * 0.5);
+  ctx.lineTo(x - r * 0.2, y + r * 0.6);
+  ctx.lineTo(x - r * 0.55, y + r * 0.2);
+  ctx.lineTo(x - r * 0.5, y - r * 0.3);
+  ctx.closePath();
+  ctx.fill();
+  // ハイライト
+  ctx.fillStyle = '#A09070';
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.1, y - r * 0.4);
+  ctx.lineTo(x + r * 0.3, y - r * 0.2);
+  ctx.lineTo(x + r * 0.1, y + r * 0.1);
+  ctx.lineTo(x - r * 0.2, y);
+  ctx.closePath();
+  ctx.fill();
+  // クレーター
+  ctx.fillStyle = '#6B5B45';
+  ctx.beginPath();
+  ctx.arc(x + r * 0.15, y + r * 0.15, r * 0.12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x - r * 0.2, y - r * 0.1, r * 0.08, 0, Math.PI * 2);
+  ctx.fill();
+  // 炎の尾（落下感）
+  ctx.fillStyle = 'rgba(255,100,0,0.6)';
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.3, y - r * 0.5);
+  ctx.quadraticCurveTo(x - r * 0.1, y - r * 0.9, x + r * 0.2, y - r * 0.7);
+  ctx.lineTo(x, y - r * 0.4);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255,200,0,0.4)';
+  ctx.beginPath();
+  ctx.moveTo(x + r * 0.1, y - r * 0.5);
+  ctx.quadraticCurveTo(x + r * 0.3, y - r * 1, x + r * 0.5, y - r * 0.6);
+  ctx.lineTo(x + r * 0.3, y - r * 0.3);
+  ctx.closePath();
+  ctx.fill();
+});
+
+register('moon', (ctx, x, y, size) => {
+  const r = size / 2;
+  // 月（クレセント）
+  ctx.fillStyle = '#FFFACD';
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.7, 0, Math.PI * 2);
+  ctx.fill();
+  // 影（三日月にする）
+  ctx.fillStyle = '#1a0533';
+  ctx.beginPath();
+  ctx.arc(x + r * 0.25, y - r * 0.1, r * 0.55, 0, Math.PI * 2);
+  ctx.fill();
+  // 光るエフェクト
+  const glow = ctx.createRadialGradient(x - r * 0.15, y, r * 0.3, x, y, r);
+  glow.addColorStop(0, 'rgba(255,250,200,0.3)');
+  glow.addColorStop(1, 'rgba(255,250,200,0)');
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+});
+
+register('ufo', (ctx, x, y, size) => {
+  const r = size / 2;
+  // ドーム（ガラス）
+  ctx.fillStyle = 'rgba(100,200,255,0.6)';
+  ctx.beginPath();
+  ctx.ellipse(x, y - r * 0.15, r * 0.3, r * 0.35, 0, Math.PI, 0);
+  ctx.fill();
+  // 本体（円盤）
+  const grad = ctx.createLinearGradient(x, y - r * 0.2, x, y + r * 0.2);
+  grad.addColorStop(0, '#C0C0C0');
+  grad.addColorStop(0.5, '#888');
+  grad.addColorStop(1, '#555');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.ellipse(x, y, r * 0.7, r * 0.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // ライト
+  const colors = ['#FF0000', '#00FF00', '#FFFF00'];
+  for (let i = 0; i < 3; i++) {
+    ctx.fillStyle = colors[i];
+    ctx.beginPath();
+    ctx.arc(x + (i - 1) * r * 0.35, y + r * 0.05, r * 0.07, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // ビーム
+  ctx.fillStyle = 'rgba(100,255,100,0.15)';
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.3, y + r * 0.15);
+  ctx.lineTo(x + r * 0.3, y + r * 0.15);
+  ctx.lineTo(x + r * 0.6, y + r * 0.7);
+  ctx.lineTo(x - r * 0.6, y + r * 0.7);
+  ctx.closePath();
+  ctx.fill();
+});
+
+register('space-helmet', (ctx, x, y, size) => {
+  const r = size / 2;
+  // ヘルメット外枠
+  ctx.fillStyle = '#E0E0E0';
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.65, 0, Math.PI * 2);
+  ctx.fill();
+  // バイザー（反射）
+  const visor = ctx.createLinearGradient(x - r * 0.3, y - r * 0.3, x + r * 0.3, y + r * 0.3);
+  visor.addColorStop(0, 'rgba(100,180,255,0.7)');
+  visor.addColorStop(0.5, 'rgba(200,230,255,0.9)');
+  visor.addColorStop(1, 'rgba(100,180,255,0.7)');
+  ctx.fillStyle = visor;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.5, 0, Math.PI * 2);
+  ctx.fill();
+  // ヘルメットリング
+  ctx.strokeStyle = '#AAA';
+  ctx.lineWidth = Math.max(1, r * 0.08);
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.65, 0, Math.PI * 2);
+  ctx.stroke();
+  // アンテナ
+  ctx.strokeStyle = '#CCC';
+  ctx.lineWidth = Math.max(1, r * 0.05);
+  ctx.beginPath();
+  ctx.moveTo(x + r * 0.3, y - r * 0.55);
+  ctx.lineTo(x + r * 0.35, y - r * 0.85);
+  ctx.stroke();
+  ctx.fillStyle = '#FF4444';
+  ctx.beginPath();
+  ctx.arc(x + r * 0.35, y - r * 0.9, r * 0.08, 0, Math.PI * 2);
+  ctx.fill();
+});
+
+// ============================================================
 // エイリアス（同じスプライトを別名で参照）
 // ============================================================
 register('rainbow-icon', (ctx, x, y, size, opts) => registry['rainbow'](ctx, x, y, size, opts));

@@ -12,6 +12,7 @@ import { Stage5Makeup } from './stage5-makeup.js';
 import { Stage6Flush } from './stage6-flush.js';
 import { SecretGhost } from './secret-ghost.js';
 import { Stage8Kimetsu } from './stage8-kimetsu.js';
+import { Stage9Fart } from './stage9-fart.js';
 
 class Game {
   constructor() {
@@ -144,6 +145,7 @@ class Game {
         6: Stage6Flush,
         7: SecretGhost,
         8: Stage8Kimetsu,
+        9: Stage9Fart,
       };
       const StageClass = stageMap[stageId];
       if (StageClass) {

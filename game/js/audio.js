@@ -132,6 +132,32 @@ export function sfxGhost() {
   osc.stop(ctx.currentTime + 0.6);
 }
 
+export function sfxFart() {
+  const ctx = getCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(120, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.25);
+  gain.gain.setValueAtTime(0.15, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.3);
+  const osc2 = ctx.createOscillator();
+  const gain2 = ctx.createGain();
+  osc2.type = 'square';
+  osc2.frequency.setValueAtTime(80, ctx.currentTime);
+  osc2.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.2);
+  gain2.gain.setValueAtTime(0.06, ctx.currentTime);
+  gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+  osc2.connect(gain2);
+  gain2.connect(ctx.destination);
+  osc2.start();
+  osc2.stop(ctx.currentTime + 0.25);
+}
+
 export function sfxClear() {
   playNotes([
     [523, 0.5], [659, 0.5], [784, 0.5], [1047, 1],
@@ -159,6 +185,8 @@ export function startBGM(stageId) {
     5: [[659, 0.5], [784, 0.5], [880, 0.5], [784, 0.5]],
     6: [[523, 0.5], [440, 0.5], [392, 0.5], [330, 0.5]],
     7: [[220, 1], [196, 1], [175, 1], [165, 1]],
+    8: [[330, 0.5], [392, 0.5], [440, 0.5], [523, 0.5]],
+    9: [[440, 0.5], [523, 0.5], [659, 0.5], [523, 0.5]],
   };
   const melody = melodies[stageId] || melodies.title;
   let noteIdx = 0;
