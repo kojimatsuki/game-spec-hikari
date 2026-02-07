@@ -4,6 +4,7 @@ import { drawCounter, drawButton, isInRect, ParticleSystem } from './ui.js';
 import { hikari } from './hikari.js';
 import { MAKEUP_TOOLS, NPC_CHARACTERS, HIKARI_REACTIONS } from './data.js';
 import { sfxTap, sfxCollect, startBGM, stopBGM } from './audio.js';
+import { drawSprite } from './sprites.js';
 
 export class Stage5Makeup {
   constructor(game) {
@@ -19,7 +20,7 @@ export class Stage5Makeup {
     // メイク対象
     this.currentTarget = 0;
     this.targets = [
-      { name: 'ひかりちゃん', emoji: '👧' },
+      { name: 'ひかりちゃん', sprite: 'hikari' },
       ...this.shuffleNPCs(),
     ];
 
@@ -64,7 +65,7 @@ export class Stage5Makeup {
     }
 
     this.particles.draw(ctx);
-    drawCounter(ctx, this.count, this.goal, '💄 メイク', cw);
+    drawCounter(ctx, this.count, this.goal, 'メイク', cw);
     hikari.drawWithBubble(ctx, 50, ch - 50, 30, this.messageTimer > 0 ? this.message : null);
 
     if (this.cleared) {
@@ -73,7 +74,9 @@ export class Stage5Makeup {
       ctx.fillStyle = '#FF69B4';
       ctx.font = 'bold 32px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('💄 へんてこ大賞！ 🏆', cw / 2, ch / 2);
+      drawSprite(ctx, 'lipstick', cw / 2 - 130, ch / 2, 22);
+      ctx.fillText('へんてこ大賞！', cw / 2, ch / 2);
+      drawSprite(ctx, 'trophy', cw / 2 + 120, ch / 2, 22);
     }
   }
 
@@ -83,7 +86,10 @@ export class Stage5Makeup {
     ctx.fillStyle = '#FFF';
     ctx.font = 'bold 18px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`${target.emoji} ${target.name}にメイク！`, cw / 2, 60);
+    drawSprite(ctx, target.sprite, cw / 2 - ctx.measureText(target.name + 'にメイク！').width / 2 - 18, 60, 16);
+    ctx.fillStyle = '#FFF';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`${target.name}にメイク！`, cw / 2, 60);
 
     // 顔
     const faceX = cw / 2;
@@ -100,12 +106,9 @@ export class Stage5Makeup {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // 目
-    ctx.font = `${r * 0.4}px serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('👁️', faceX - r * 0.35, faceY - r * 0.15);
-    ctx.fillText('👁️', faceX + r * 0.35, faceY - r * 0.15);
+    // 目（スプライト）
+    drawSprite(ctx, 'eye', faceX - r * 0.35, faceY - r * 0.15, r * 0.2);
+    drawSprite(ctx, 'eye', faceX + r * 0.35, faceY - r * 0.15, r * 0.2);
     // 鼻
     ctx.fillStyle = '#DEB887';
     ctx.beginPath();
@@ -126,9 +129,8 @@ export class Stage5Makeup {
       ctx.arc(m.x, m.y, m.size || 8, 0, Math.PI * 2);
       ctx.fill();
       ctx.globalAlpha = 1;
-      if (m.emoji) {
-        ctx.font = `${m.size * 2 || 16}px serif`;
-        ctx.fillText(m.emoji, m.x, m.y);
+      if (m.sprite) {
+        drawSprite(ctx, m.sprite, m.x, m.y, (m.size || 8) * 1.5);
       }
     }
 
@@ -151,12 +153,11 @@ export class Stage5Makeup {
         ctx.lineWidth = 3;
         ctx.stroke();
       }
-      ctx.font = `${toolW * 0.5}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(tool.emoji, tx + toolW / 2, toolY + toolW * 0.35);
+      drawSprite(ctx, tool.sprite, tx + toolW / 2, toolY + toolW * 0.35, toolW * 0.25);
       ctx.font = '10px sans-serif';
       ctx.fillStyle = '#333';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
       ctx.fillText(tool.name, tx + toolW / 2, toolY + toolW * 0.75);
       this._toolButtons.push({ x: tx, y: toolY, w: toolW, h: toolW, index: i });
     });
@@ -165,7 +166,7 @@ export class Stage5Makeup {
     const btnW = 160, btnH = 44;
     const btnX = cw / 2 - btnW / 2;
     const btnY = ch * 0.82;
-    drawButton(ctx, '✨ 完成！', btnX, btnY, btnW, btnH, '#FF1493');
+    drawButton(ctx, '完成！', btnX, btnY, btnW, btnH, '#FF1493');
     this._doneBtnRect = [btnX, btnY, btnW, btnH];
   }
 
@@ -176,10 +177,22 @@ export class Stage5Makeup {
     ctx.fillText('変度チェック！', cw / 2, ch * 0.2);
 
     const stars = Math.min(3, Math.ceil(this.weirdScore / 3));
-    ctx.font = '40px serif';
-    ctx.fillText('⭐'.repeat(stars) + '☆'.repeat(3 - stars), cw / 2, ch * 0.35);
+    // スター表示
+    const starSize = 22;
+    const starGap = 50;
+    const starStartX = cw / 2 - starGap;
+    for (let i = 0; i < 3; i++) {
+      if (i < stars) {
+        drawSprite(ctx, 'star', starStartX + i * starGap, ch * 0.35, starSize);
+      } else {
+        // 空のスター（灰色）
+        ctx.globalAlpha = 0.3;
+        drawSprite(ctx, 'star', starStartX + i * starGap, ch * 0.35, starSize);
+        ctx.globalAlpha = 1;
+      }
+    }
 
-    const reactions = ['え…これ私？😂', 'すごい顔…🤣', '…芸術的！🎨'];
+    const reactions = ['え…これ私？', 'すごい顔…', '…芸術的！'];
     ctx.font = '20px sans-serif';
     ctx.fillStyle = '#FFF';
     ctx.fillText(reactions[Math.min(stars - 1, 2)], cw / 2, ch * 0.5);
@@ -211,7 +224,7 @@ export class Stage5Makeup {
         this.count++;
         this.phase = 'result';
         this.particles.emit(this.game.cw / 2, this.game.ch / 2, 10, {
-          emojis: ['✨', '💄', '🌈', '⭐'], spread: 150, size: 25,
+          sprites: ['sparkle', 'lipstick', 'rainbow', 'star'], spread: 150, size: 25,
         });
         if (this.count >= this.goal) {
           this.cleared = true;
@@ -228,13 +241,14 @@ export class Stage5Makeup {
       if (dx * dx + dy * dy < this.faceRadius * this.faceRadius * 1.2) {
         const tool = MAKEUP_TOOLS[this.selectedTool];
         const color = tool.colors[Math.floor(Math.random() * tool.colors.length)];
+        const decoSprites = ['star', 'heart', 'poop'];
         this.appliedMakeup.push({
           x, y, color,
-          emoji: tool.emoji === '⭐' ? ['⭐', '❤️', '💩'][Math.floor(Math.random() * 3)] : null,
+          sprite: tool.sprite === 'star' ? decoSprites[Math.floor(Math.random() * decoSprites.length)] : null,
           size: 5 + Math.random() * 8,
         });
         sfxTap();
-        this.particles.emit(x, y, 2, { emojis: ['✨'], spread: 30, size: 10 });
+        this.particles.emit(x, y, 2, { sprites: ['sparkle'], spread: 30, size: 10 });
         this.showMessage(HIKARI_REACTIONS.stage5.funny);
       }
     } else if (this.phase === 'result') {

@@ -1,12 +1,12 @@
 // hikari.js - ひかりちゃんのキャラクター管理
 
+import { drawSprite } from './sprites.js';
+
 export class Hikari {
   constructor() {
     this.x = 0;
     this.y = 0;
     this.size = 40;
-    this.expression = '😊';
-    this.costume = '👧';
     this.sparkleTimer = 0;
   }
 
@@ -15,32 +15,25 @@ export class Hikari {
     this.y = y;
   }
 
-  setExpression(expr) {
-    this.expression = expr;
-  }
-
-  setCostume(costume) {
-    this.costume = costume;
-  }
+  // 互換性のため残す（何もしない）
+  setExpression() {}
+  setCostume() {}
 
   draw(ctx, x, y, size) {
     const drawX = x ?? this.x;
     const drawY = y ?? this.y;
     const drawSize = size ?? this.size;
 
-    ctx.font = `${drawSize}px serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(this.costume, drawX, drawY);
+    drawSprite(ctx, 'hikari', drawX, drawY, drawSize);
 
     // キラキラエフェクト
     this.sparkleTimer += 0.1;
-    const sparkles = ['✨', '⭐', '💫'];
+    const sparkles = ['sparkle', 'star', 'swirl-star'];
     const sparkle = sparkles[Math.floor(this.sparkleTimer) % sparkles.length];
-    ctx.font = `${drawSize * 0.4}px serif`;
+    const sSize = drawSize * 0.4;
     const offX = Math.sin(this.sparkleTimer * 2) * drawSize * 0.5;
     const offY = Math.cos(this.sparkleTimer * 3) * drawSize * 0.3;
-    ctx.fillText(sparkle, drawX + offX, drawY - drawSize * 0.5 + offY);
+    drawSprite(ctx, sparkle, drawX + offX, drawY - drawSize * 0.5 + offY, sSize);
   }
 
   drawWithBubble(ctx, x, y, size, text) {

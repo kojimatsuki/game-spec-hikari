@@ -4,6 +4,7 @@ import { drawCounter, ParticleSystem } from './ui.js';
 import { hikari } from './hikari.js';
 import { HIKARI_REACTIONS } from './data.js';
 import { sfxSlash, startBGM, stopBGM } from './audio.js';
+import { drawSprite } from './sprites.js';
 
 export class Stage2Worm {
   constructor(game) {
@@ -34,7 +35,7 @@ export class Stage2Worm {
   }
 
   spawnWorm(x, y, size) {
-    if (size < 10) return; // 小さすぎるミミズは消える
+    if (size < 10) return;
     this.worms.push({
       x, y, size,
       vx: (Math.random() - 0.5) * 60,
@@ -55,26 +56,22 @@ export class Stage2Worm {
       w.phase += dt * 3;
       w.x += w.vx * dt;
       w.y += w.vy * dt;
-      // 壁バウンス
       if (w.x < 20 || w.x > cw - 20) w.vx *= -1;
       if (w.y < 60 || w.y > ch - 60) w.vy *= -1;
       w.x = Math.max(20, Math.min(cw - 20, w.x));
       w.y = Math.max(60, Math.min(ch - 60, w.y));
     }
 
-    // スラッシュトレイル減衰
     for (let i = this.slashTrail.length - 1; i >= 0; i--) {
       this.slashTrail[i].life -= dt * 3;
       if (this.slashTrail[i].life <= 0) this.slashTrail.splice(i, 1);
     }
 
-    // ミミズ多すぎる場合は小さいのを削除
     if (this.worms.length > 50) {
       this.worms.sort((a, b) => a.size - b.size);
       this.worms.splice(0, this.worms.length - 40);
     }
 
-    // 反応チェック
     if (this.count >= 50 && !this._said50) {
       this._said50 = true;
       this.showMessage(HIKARI_REACTIONS.stage2[50]);
@@ -109,7 +106,7 @@ export class Stage2Worm {
     }
 
     this.particles.draw(ctx);
-    drawCounter(ctx, this.count, this.goal, '🪱 きった', cw);
+    drawCounter(ctx, this.count, this.goal, 'きった', cw);
     hikari.drawWithBubble(ctx, 50, ch - 60, 40, this.messageTimer > 0 ? this.message : null);
 
     if (this.cleared) {
@@ -118,7 +115,7 @@ export class Stage2Worm {
       ctx.fillStyle = '#90EE90';
       ctx.font = 'bold 36px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('🪱 ステージクリア！ 🪱', cw / 2, ch / 2);
+      ctx.fillText('ステージクリア！', cw / 2, ch / 2);
     }
   }
 
@@ -136,11 +133,8 @@ export class Stage2Worm {
       ctx.arc(sx, sy, radius, 0, Math.PI * 2);
       ctx.fill();
     }
-    // 目
-    ctx.font = `${Math.max(8, w.size * 0.3)}px serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('🪱', w.x, w.y);
+    // 頭スプライト
+    drawSprite(ctx, 'worm-head', w.x, w.y, Math.max(8, w.size * 0.3));
   }
 
   onClick(x, y) {
@@ -181,9 +175,8 @@ export class Stage2Worm {
       if (dx * dx + dy * dy < (w.size * 1.2) ** 2) {
         sfxSlash();
         this.particles.emit(w.x, w.y, 5, {
-          emojis: ['⚡', '💥'], spread: 100, size: 20,
+          sprites: ['lightning', 'explosion'], spread: 100, size: 20,
         });
-        // 分裂
         const newSize = w.size * 0.7;
         this.worms.splice(i, 1);
         this.spawnWorm(w.x - 15, w.y, newSize);

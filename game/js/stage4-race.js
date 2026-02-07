@@ -4,6 +4,7 @@ import { drawScore, ParticleSystem } from './ui.js';
 import { hikari } from './hikari.js';
 import { HIKARI_REACTIONS } from './data.js';
 import { sfxJump, sfxStar, sfxPoopStep, startBGM, stopBGM } from './audio.js';
+import { drawSprite } from './sprites.js';
 
 const GRAVITY = 800;
 const JUMP_POWER = -350;
@@ -24,7 +25,6 @@ export class Stage4Race {
     this.message = '';
     this.messageTimer = 0;
 
-    // プレイヤー
     this.playerX = game.cw * 0.2;
     this.playerY = this.groundY;
     this.vy = 0;
@@ -34,17 +34,15 @@ export class Stage4Race {
     this.slowTimer = 0;
     this._jumpedThisTouch = false;
 
-    // 障害物・アイテム
     this.objects = [];
     this.generateCourse();
 
-    // 背景
-    this.bgPhase = 0; // 0:草原 1:山 2:空 3:虹
+    this.bgPhase = 0;
     this.bgColors = [
-      ['#87CEEB', '#228B22'], // 草原
-      ['#4682B4', '#8B7355'], // 山
-      ['#1E90FF', '#87CEFA'], // 空
-      ['#FF69B4', '#DDA0DD'], // 虹
+      ['#87CEEB', '#228B22'],
+      ['#4682B4', '#8B7355'],
+      ['#1E90FF', '#87CEFA'],
+      ['#FF69B4', '#DDA0DD'],
     ];
 
     startBGM(4);
@@ -56,24 +54,22 @@ export class Stage4Race {
     while (x < COURSE_LENGTH) {
       const r = Math.random();
       if (r < 0.25) {
-        this.objects.push({ type: 'star', x, y: this.groundY - 80 - Math.random() * 100, emoji: '⭐', size: 30 });
+        this.objects.push({ type: 'star', x, y: this.groundY - 80 - Math.random() * 100, sprite: 'star', size: 30 });
       } else if (r < 0.4) {
-        this.objects.push({ type: 'poop', x, y: this.groundY - 20, emoji: '💩', size: 30 });
+        this.objects.push({ type: 'poop', x, y: this.groundY - 20, sprite: 'poop', size: 30 });
       } else if (r < 0.55) {
-        this.objects.push({ type: 'mountain', x, y: this.groundY - 60, emoji: '⛰️', size: 50 });
+        this.objects.push({ type: 'mountain', x, y: this.groundY - 60, sprite: 'mountain', size: 50 });
       } else if (r < 0.65) {
-        this.objects.push({ type: 'cloud', x, y: this.groundY - 180 - Math.random() * 60, emoji: '☁️', size: 40 });
+        this.objects.push({ type: 'cloud', x, y: this.groundY - 180 - Math.random() * 60, sprite: 'cloud', size: 40 });
       } else if (r < 0.72) {
-        this.objects.push({ type: 'rainbow', x, y: this.groundY - 120, emoji: '🌈', size: 50 });
-        // 虹ゾーンに星を配置
+        this.objects.push({ type: 'rainbow', x, y: this.groundY - 120, sprite: 'rainbow', size: 50 });
         for (let i = 1; i <= 5; i++) {
-          this.objects.push({ type: 'star', x: x + i * 40, y: this.groundY - 140 - Math.random() * 40, emoji: '⭐', size: 25 });
+          this.objects.push({ type: 'star', x: x + i * 40, y: this.groundY - 140 - Math.random() * 40, sprite: 'star', size: 25 });
         }
       }
       x += 100 + Math.random() * 150;
     }
-    // ゴール
-    this.objects.push({ type: 'goal', x: COURSE_LENGTH, y: this.groundY - 40, emoji: '🏁', size: 60 });
+    this.objects.push({ type: 'goal', x: COURSE_LENGTH, y: this.groundY - 40, sprite: 'finish-flag', size: 60 });
   }
 
   update(dt) {
@@ -81,27 +77,20 @@ export class Stage4Race {
     this.particles.update(dt);
     if (this.messageTimer > 0) this.messageTimer -= dt;
 
-    // 長押し
     if (this.isHolding && this.isOnGround) {
       this.holdTime += dt;
     }
 
-    // スロー回復
     if (this.slowTimer > 0) {
       this.slowTimer -= dt;
       if (this.slowTimer <= 0) {
         this.speed = SCROLL_SPEED;
-        hikari.setExpression('😊');
       }
     }
 
-    // 移動
     this.distance += this.speed * dt;
-
-    // 背景フェーズ
     this.bgPhase = Math.min(3, Math.floor(this.distance / (COURSE_LENGTH / 4)));
 
-    // 重力
     if (!this.isOnGround) {
       this.vy += GRAVITY * dt;
       this.playerY += this.vy * dt;
@@ -112,7 +101,6 @@ export class Stage4Race {
       }
     }
 
-    // 当たり判定
     for (let i = this.objects.length - 1; i >= 0; i--) {
       const obj = this.objects[i];
       const screenX = obj.x - this.distance + this.playerX;
@@ -127,14 +115,13 @@ export class Stage4Race {
           sfxStar();
           this.score += 10;
           this.particles.emit(screenX, obj.y, 5, {
-            emojis: ['⭐', '✨'], spread: 80, size: 15,
+            sprites: ['star', 'sparkle'], spread: 80, size: 15,
           });
           this.objects.splice(i, 1);
         } else if (obj.type === 'poop' && this.isOnGround) {
           sfxPoopStep();
           this.speed = Math.max(100, this.speed - 30);
           this.showMessage(HIKARI_REACTIONS.stage4.poop);
-          hikari.setExpression('😱');
           this.slowTimer = 1.5;
           this.objects.splice(i, 1);
         } else if (obj.type === 'goal') {
@@ -142,7 +129,6 @@ export class Stage4Race {
           this.showMessage(HIKARI_REACTIONS.stage4.goal);
           stopBGM();
         } else if (obj.type === 'mountain' && this.isOnGround) {
-          // 山にぶつかったら少し戻る
           this.distance -= 20;
         }
       }
@@ -151,7 +137,6 @@ export class Stage4Race {
 
   draw(ctx) {
     const { cw, ch } = this.game;
-    // 背景
     const [skyC, groundC] = this.bgColors[this.bgPhase];
     ctx.fillStyle = skyC;
     ctx.fillRect(0, 0, cw, this.groundY);
@@ -162,30 +147,20 @@ export class Stage4Race {
     for (const obj of this.objects) {
       const screenX = obj.x - this.distance + this.playerX;
       if (screenX < -60 || screenX > cw + 60) continue;
-      ctx.font = `${obj.size}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(obj.emoji, screenX, obj.y);
+      drawSprite(ctx, obj.sprite, screenX, obj.y, obj.size);
     }
 
-    // プレイヤー（バイクひかりちゃん）
-    ctx.font = '40px serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    const bikeEmoji = this.isOnGround ? '🏍️' : '🕊️';
-    ctx.fillText(bikeEmoji, this.playerX, this.playerY);
-    ctx.font = '25px serif';
-    ctx.fillText('👧', this.playerX, this.playerY - 30);
-    // 飛行中のキラキラ
+    // プレイヤー
+    const vehicleSprite = this.isOnGround ? 'bike' : 'bird';
+    drawSprite(ctx, vehicleSprite, this.playerX, this.playerY, 40);
+    drawSprite(ctx, 'hikari', this.playerX, this.playerY - 30, 25);
     if (!this.isOnGround) {
       this.particles.emit(this.playerX - 20, this.playerY + 10, 1, {
-        emojis: ['✨'], spread: 20, size: 12,
+        sprites: ['sparkle'], spread: 20, size: 12,
       });
     }
 
     this.particles.draw(ctx);
-
-    // UI
     drawScore(ctx, this.score, cw);
 
     // 距離バー
@@ -196,11 +171,13 @@ export class Stage4Race {
     ctx.fillStyle = '#4CAF50';
     roundRect(ctx, 10, 10, Math.max(20, cw * 0.5 * ratio), 20, 10);
     ctx.fill();
+    // フラッグアイコン + パーセント
+    drawSprite(ctx, 'finish-flag', 18, 20, 14);
     ctx.fillStyle = '#FFF';
     ctx.font = '12px sans-serif';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`🏁 ${Math.floor(ratio * 100)}%`, 18, 20);
+    ctx.fillText(`${Math.floor(ratio * 100)}%`, 28, 20);
 
     hikari.drawWithBubble(ctx, 50, ch - 50, 30, this.messageTimer > 0 ? this.message : null);
 
@@ -210,9 +187,9 @@ export class Stage4Race {
       ctx.fillStyle = '#87CEEB';
       ctx.font = 'bold 32px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('🏍️ ゴール！ 🏁', cw / 2, ch / 2 - 20);
+      ctx.fillText('ゴール！', cw / 2, ch / 2 - 20);
       ctx.font = '20px sans-serif';
-      ctx.fillText(`⭐ スコア: ${this.score}`, cw / 2, ch / 2 + 20);
+      ctx.fillText(`スコア: ${this.score}`, cw / 2, ch / 2 + 20);
     }
   }
 
@@ -221,7 +198,6 @@ export class Stage4Race {
       this.game.completeStage(4);
       return;
     }
-    // onDragEndでジャンプ済みなら無視
     if (this._jumpedThisTouch) return;
     if (this.isOnGround) {
       this.jump(false);

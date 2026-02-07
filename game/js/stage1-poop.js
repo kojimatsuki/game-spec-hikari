@@ -4,6 +4,7 @@ import { drawCounter, ParticleSystem } from './ui.js';
 import { hikari } from './hikari.js';
 import { HIKARI_REACTIONS } from './data.js';
 import { sfxCollect, sfxGolden, sfxBomb, startBGM, stopBGM } from './audio.js';
+import { drawSprite } from './sprites.js';
 
 export class Stage1Poop {
   constructor(game) {
@@ -51,18 +52,18 @@ export class Stage1Poop {
     const { cw } = this.game;
     const r = Math.random();
     let type = 'normal';
-    let emoji = '💩';
+    let sprite = 'poop';
     let value = 1;
     let size = 35 + Math.random() * 15;
 
     if (r < 0.05) {
       type = 'golden';
-      emoji = '✨💩';
+      sprite = 'golden-poop';
       value = 5;
       size = 45;
     } else if (r < 0.12) {
       type = 'bomb';
-      emoji = '💣';
+      sprite = 'bomb';
       value = -10;
       size = 35;
     }
@@ -72,7 +73,7 @@ export class Stage1Poop {
       y: -40,
       speed: 80 + Math.random() * 120,
       size,
-      emoji,
+      sprite,
       type,
       value,
       wobble: Math.random() * Math.PI * 2,
@@ -89,19 +90,15 @@ export class Stage1Poop {
     ctx.fillRect(0, 0, cw, ch);
 
     // うんこ描画
-    ctx.fillStyle = '#FFF';
     for (const p of this.poops) {
-      ctx.font = `${p.size}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
       const ox = Math.sin(p.wobble) * 5;
-      ctx.fillText(p.emoji, p.x + ox, p.y);
+      drawSprite(ctx, p.sprite, p.x + ox, p.y, p.size);
     }
 
     this.particles.draw(ctx);
 
     // カウンター
-    drawCounter(ctx, this.count, this.goal, '💩 あつめた', cw);
+    drawCounter(ctx, this.count, this.goal, 'あつめた', cw);
 
     // ひかりちゃん
     hikari.drawWithBubble(ctx, 50, ch - 60, 40, this.messageTimer > 0 ? this.message : null);
@@ -113,7 +110,7 @@ export class Stage1Poop {
       ctx.fillStyle = '#FFD700';
       ctx.font = 'bold 36px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('💩 ステージクリア！ 💩', cw / 2, ch / 2);
+      ctx.fillText('ステージクリア！', cw / 2, ch / 2);
     }
   }
 
@@ -134,19 +131,19 @@ export class Stage1Poop {
         if (p.type === 'bomb') {
           sfxBomb();
           this.particles.emit(p.x, p.y, 8, {
-            emojis: ['💥', '🔥'], spread: 150, size: 25,
+            sprites: ['explosion', 'fire'], spread: 150, size: 25,
           });
-          this.showMessage('💣 ドカーン！ -10');
+          this.showMessage('ドカーン！ -10');
         } else if (p.type === 'golden') {
           sfxGolden();
           this.particles.emit(p.x, p.y, 12, {
-            emojis: ['✨', '⭐', '💫'], spread: 200, size: 20,
+            sprites: ['sparkle', 'star', 'swirl-star'], spread: 200, size: 20,
           });
-          this.showMessage('✨ ゴールデンうんこ！ +5');
+          this.showMessage('ゴールデンうんこ！ +5');
         } else {
           sfxCollect();
           this.particles.emit(p.x, p.y, 3, {
-            emojis: ['💩'], spread: 80, size: 15,
+            sprites: ['poop'], spread: 80, size: 15,
           });
         }
 

@@ -4,6 +4,7 @@ import { drawButton, isInRect, ParticleSystem } from './ui.js';
 import { hikari } from './hikari.js';
 import { HIKARI_REACTIONS } from './data.js';
 import { sfxFlush, sfxTap, startBGM, stopBGM } from './audio.js';
+import { drawSprite } from './sprites.js';
 
 export class Stage6Flush {
   constructor(game) {
@@ -32,10 +33,10 @@ export class Stage6Flush {
 
   spawnFloatingItems() {
     const { cw, ch } = this.game;
-    const emojis = ['💩', '🪱', '💄', '⭐', '💰', '🔪', '🏍️', '👻', '💣', '🌈', '☁️', '🎰'];
+    const sprites = ['poop', 'worm-head', 'lipstick', 'star', 'coin', 'knife', 'bike', 'ghost', 'bomb', 'rainbow', 'cloud', 'gacha-machine'];
     for (let i = 0; i < 30; i++) {
       this.floatingItems.push({
-        emoji: emojis[Math.floor(Math.random() * emojis.length)],
+        sprite: sprites[Math.floor(Math.random() * sprites.length)],
         x: Math.random() * cw,
         y: Math.random() * (ch * 0.6) + 50,
         size: 20 + Math.random() * 25,
@@ -129,23 +130,20 @@ export class Stage6Flush {
       ctx.fillStyle = '#FF69B4';
       ctx.font = 'bold 32px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('🚽 全部流した！ 🌊', cw / 2, ch / 2);
+      drawSprite(ctx, 'toilet', cw / 2 - 120, ch / 2, 24);
+      ctx.fillText('全部流した！', cw / 2, ch / 2);
+      drawSprite(ctx, 'wave', cw / 2 + 110, ch / 2, 24);
     } else {
       // 浮遊アイテム
       for (const item of this.floatingItems) {
         if (item.size < 3) continue;
-        ctx.font = `${item.size}px serif`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
         ctx.globalAlpha = item.flushed ? Math.max(0.2, item.size / 20) : 1;
-        ctx.fillText(item.emoji, item.x, item.y);
+        drawSprite(ctx, item.sprite, item.x, item.y, item.size * 0.5);
       }
       ctx.globalAlpha = 1;
 
       // トイレ
-      ctx.font = '80px serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('🚽', cw / 2, ch * 0.85);
+      drawSprite(ctx, 'toilet', cw / 2, ch * 0.85, 50);
 
       // 水エフェクト
       if (this.shakeTimer > 0) {
@@ -161,7 +159,7 @@ export class Stage6Flush {
       ctx.save();
       ctx.translate(cw / 2, ch * 0.7);
       ctx.scale(pulse, pulse);
-      drawButton(ctx, '🌊 流す！！', -btnW / 2, -btnH / 2, btnW, btnH, '#4169E1');
+      drawButton(ctx, '流す！！', -btnW / 2, -btnH / 2, btnW, btnH, '#4169E1');
       ctx.restore();
       this._flushBtnRect = [cw / 2 - btnW / 2, ch * 0.7 - btnH / 2, btnW, btnH];
 
@@ -211,7 +209,7 @@ export class Stage6Flush {
       }
 
       this.particles.emit(this.game.cw / 2, this.game.ch * 0.85, 5, {
-        emojis: ['💧', '🌊', '💦'], spread: 120, size: 20, upward: 100,
+        sprites: ['water-drop', 'wave', 'splash'], spread: 120, size: 20, upward: 100,
       });
 
       if (this.flushCount % 10 === 0) {

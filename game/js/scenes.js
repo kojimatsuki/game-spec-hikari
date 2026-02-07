@@ -4,6 +4,7 @@ import { GAME_TITLE, STAGES, SECRET_STAGE, OPENING_TEXTS, ENDING_TEXTS } from '.
 import { drawButton, drawCenterText, isInRect, ParticleSystem } from './ui.js';
 import { hikari } from './hikari.js';
 import { sfxTap, sfxClear, startBGM, stopBGM } from './audio.js';
+import { drawSprite } from './sprites.js';
 
 // ── タイトル画面 ──
 export class TitleScene {
@@ -21,7 +22,7 @@ export class TitleScene {
       const { cw, ch } = this.game;
       this.particles.emit(
         Math.random() * cw, Math.random() * ch, 1,
-        { emojis: ['✨', '⭐', '💫', '🌟'], spread: 30, size: 20 }
+        { sprites: ['sparkle', 'star', 'swirl-star', 'glow-star'], spread: 30, size: 20 }
       );
     }
   }
@@ -43,14 +44,10 @@ export class TitleScene {
     ctx.translate(cw / 2, ch * 0.35);
     const s = 1 + Math.sin(this.timer * 2) * 0.05;
     ctx.scale(s, s);
-    ctx.font = '80px serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('🌀', 0, 0);
+    drawSprite(ctx, 'portal', 0, 0, 80);
     ctx.restore();
 
     // ひかりちゃん
-    hikari.setCostume('👧');
     hikari.draw(ctx, cw / 2, ch * 0.35, 50);
 
     // タイトル
@@ -77,7 +74,7 @@ export class TitleScene {
     ctx.translate(cw / 2, btnY + btnH / 2);
     ctx.scale(pulse, pulse);
     ctx.translate(-cw / 2, -(btnY + btnH / 2));
-    drawButton(ctx, '🎮 はじめる', btnX, btnY, btnW, btnH, '#FF69B4');
+    drawButton(ctx, 'はじめる', btnX, btnY, btnW, btnH, '#FF69B4');
     ctx.restore();
     this._btnRect = [btnX, btnY, btnW, btnH];
   }
@@ -136,10 +133,7 @@ export class OpeningScene {
       ctx.save();
       ctx.translate(cw / 2, ch / 2);
       ctx.rotate(this.spinAngle);
-      ctx.font = '100px serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('🌀', 0, 0);
+      drawSprite(ctx, 'portal', 0, 0, 100);
       ctx.restore();
     } else {
       // テキスト表示
@@ -239,23 +233,27 @@ export class StageSelectScene {
       ctx.fill();
       ctx.globalAlpha = 1;
 
+      // ステージアイコン（スプライト）
+      drawSprite(ctx, stage.sprite, x + 24, y + btnH / 2, 28);
+
       ctx.fillStyle = '#FFF';
-      ctx.font = '28px serif';
+      ctx.font = 'bold 15px sans-serif';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(stage.emoji, x + 10, y + btnH / 2);
+      if (isLocked) {
+        drawSprite(ctx, 'lock', x + 62, y + btnH / 2 - 10, 15);
+      } else {
+        ctx.fillText(stage.name, x + 48, y + btnH / 2 - 10);
+      }
 
-      ctx.font = 'bold 15px sans-serif';
-      ctx.fillText(
-        isLocked ? '🔒' : stage.name,
-        x + 48, y + btnH / 2 - 10
-      );
       ctx.font = '12px sans-serif';
       ctx.fillStyle = '#DDD';
-      ctx.fillText(
-        isCleared ? '⭐ クリア済み' : (isLocked ? '' : stage.description),
-        x + 48, y + btnH / 2 + 12
-      );
+      if (isCleared) {
+        drawSprite(ctx, 'star', x + 52, y + btnH / 2 + 12, 12);
+        ctx.fillText('クリア済み', x + 63, y + btnH / 2 + 12);
+      } else if (!isLocked) {
+        ctx.fillText(stage.description, x + 48, y + btnH / 2 + 12);
+      }
 
       if (!isLocked) {
         this.buttons.push({ x, y, w: btnW, h: btnH, stageId: stage.id });
@@ -293,7 +291,7 @@ export class StageClearScene {
       const { cw, ch } = this.game;
       this.particles.emit(
         Math.random() * cw, Math.random() * ch, 2,
-        { emojis: ['🎉', '⭐', '✨', '🌟', '💫'], spread: 100, size: 30 }
+        { sprites: ['celebration', 'star', 'sparkle', 'glow-star', 'swirl-star'], spread: 100, size: 30 }
       );
     }
   }
@@ -304,15 +302,19 @@ export class StageClearScene {
     ctx.fillRect(0, 0, cw, ch);
     this.particles.draw(ctx);
 
-    drawCenterText(ctx, '🎉 ステージクリア！ 🎉', cw, ch * 0.7, 28, '#FFD700');
+    // クリアテキスト（スプライト + テキスト）
+    drawSprite(ctx, 'celebration', cw / 2 - 120, ch * 0.7, 28);
+    drawCenterText(ctx, 'ステージクリア！', cw, ch * 0.7, 28, '#FFD700');
+    drawSprite(ctx, 'celebration', cw / 2 + 120, ch * 0.7, 28);
 
     const stage = STAGES.find(s => s.id === this.stageId) || SECRET_STAGE;
+    drawSprite(ctx, stage.sprite, cw / 2 - 60, ch * 0.45, 18);
     ctx.fillStyle = '#FFC0CB';
     ctx.font = '18px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`${stage.emoji} ${stage.name}`, cw / 2, ch * 0.45);
+    ctx.fillText(stage.name, cw / 2 + 10, ch * 0.45);
 
-    hikari.drawWithBubble(ctx, cw / 2, ch * 0.3, 50, 'やったー！✨');
+    hikari.drawWithBubble(ctx, cw / 2, ch * 0.3, 50, 'やったー！');
 
     if (this.timer > 1.5) {
       const btnW = 200, btnH = 50;
@@ -360,7 +362,7 @@ export class EndingScene {
     if (Math.random() < 0.05) {
       const { cw, ch } = this.game;
       this.particles.emit(Math.random() * cw, ch, 1, {
-        emojis: ['✨', '🌟', '💫'], spread: 60, upward: 150, size: 20,
+        sprites: ['sparkle', 'glow-star', 'swirl-star'], spread: 60, upward: 150, size: 20,
       });
     }
   }

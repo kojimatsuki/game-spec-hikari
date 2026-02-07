@@ -4,6 +4,7 @@ import { ParticleSystem } from './ui.js';
 import { hikari } from './hikari.js';
 import { GHOST_TYPES, HIDE_SPOTS, HIKARI_REACTIONS } from './data.js';
 import { sfxGhost, sfxTap, startBGM, stopBGM } from './audio.js';
+import { drawSprite } from './sprites.js';
 
 const COLORS = ['#FF4444', '#4444FF', '#44BB44', '#FFDD44', '#BB44BB', '#44BBBB'];
 const GRID_COLS = 5;
@@ -161,6 +162,13 @@ export class SecretGhost {
     }
   }
 
+  drawGridSprite(ctx, spriteId, col, row, scale) {
+    const cx = this._gridX + (col + 0.5) * this.cellW;
+    const cy = this._gridY + (row + 0.5) * this.cellH;
+    const size = Math.min(this.cellW, this.cellH) * scale * 0.5;
+    drawSprite(ctx, spriteId, cx, cy, size);
+  }
+
   draw(ctx) {
     const { cw, ch } = this.game;
     // 背景（不透明に塗ってから色をオーバーレイ）
@@ -198,21 +206,26 @@ export class SecretGhost {
     }
 
     // ゴール
-    this.drawEmoji(ctx, '🚪', this.goalCol, this.goalRow, 0.6);
+    this.drawGridSprite(ctx, 'door', this.goalCol, this.goalRow, 0.6);
 
     // 隠れ場所
     for (const spot of this.hideSpots) {
-      this.drawEmoji(ctx, spot.emoji, spot.col, spot.row, 0.6);
+      this.drawGridSprite(ctx, spot.sprite, spot.col, spot.row, 0.6);
     }
 
     // お化け
     for (const g of this.ghosts) {
-      this.drawEmoji(ctx, g.emoji, g.col, g.row, 0.7);
+      this.drawGridSprite(ctx, g.sprite, g.col, g.row, 0.7);
     }
 
     // プレイヤー
     if (!this.isHiding) {
-      this.drawEmoji(ctx, '👧✨', this.playerCol, this.playerRow, 0.6);
+      this.drawGridSprite(ctx, 'hikari', this.playerCol, this.playerRow, 0.6);
+      // キラキラ
+      const cx = this._gridX + (this.playerCol + 0.5) * this.cellW;
+      const cy = this._gridY + (this.playerRow + 0.5) * this.cellH;
+      const sparkleSize = Math.min(this.cellW, this.cellH) * 0.15;
+      drawSprite(ctx, 'sparkle', cx + this.cellW * 0.25, cy - this.cellH * 0.2, sparkleSize);
     } else {
       // 隠れているマーク
       ctx.fillStyle = 'rgba(255,255,255,0.3)';
@@ -230,7 +243,9 @@ export class SecretGhost {
     ctx.font = '14px sans-serif';
     ctx.textAlign = 'center';
     const remain = Math.ceil(this.colorInterval - this.colorTimer);
-    ctx.fillText(`🎨 色変更まで ${remain}秒`, cw / 2, 30);
+    drawSprite(ctx, 'palette', cw / 2 - 70, 30, 10);
+    ctx.fillStyle = '#FFF';
+    ctx.fillText(`色変更まで ${remain}秒`, cw / 2, 30);
 
     // 操作説明
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
@@ -246,7 +261,8 @@ export class SecretGhost {
       ctx.fillStyle = '#FF4444';
       ctx.font = 'bold 32px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('👻 みーつけた！', cw / 2, ch / 2 - 20);
+      drawSprite(ctx, 'ghost', cw / 2 - 120, ch / 2 - 20, 24);
+      ctx.fillText('みーつけた！', cw / 2, ch / 2 - 20);
       ctx.fillStyle = '#FFF';
       ctx.font = '18px sans-serif';
       ctx.fillText('タップでやり直し', cw / 2, ch / 2 + 30);
@@ -258,21 +274,13 @@ export class SecretGhost {
       ctx.fillStyle = '#00FF00';
       ctx.font = 'bold 28px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('👻 クリア！ 🌟', cw / 2, ch / 2 - 20);
+      drawSprite(ctx, 'ghost', cw / 2 - 100, ch / 2 - 20, 20);
+      ctx.fillText('クリア！', cw / 2, ch / 2 - 20);
+      drawSprite(ctx, 'star', cw / 2 + 80, ch / 2 - 20, 20);
       ctx.fillStyle = '#FFD700';
       ctx.font = '16px sans-serif';
       ctx.fillText('伝説のプレイヤー！', cw / 2, ch / 2 + 20);
     }
-  }
-
-  drawEmoji(ctx, emoji, col, row, scale) {
-    const cx = this._gridX + (col + 0.5) * this.cellW;
-    const cy = this._gridY + (row + 0.5) * this.cellH;
-    const size = Math.min(this.cellW, this.cellH) * scale;
-    ctx.font = `${size}px serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(emoji, cx, cy);
   }
 
   onClick(x, y) {

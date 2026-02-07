@@ -1,5 +1,7 @@
 // ui.js - 共通UI（スコア/カウンター/演出）
 
+import { drawSprite } from './sprites.js';
+
 export function drawCounter(ctx, current, goal, label, cw) {
   const x = cw - 10;
   const y = 10;
@@ -22,11 +24,13 @@ export function drawScore(ctx, score, cw) {
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   roundRect(ctx, cw - 170, 10, 160, 36, 12);
   ctx.fill();
+  // 星スプライト
+  drawSprite(ctx, 'star', cw - 152, 28, 18);
   ctx.fillStyle = '#FFD700';
   ctx.font = 'bold 20px sans-serif';
   ctx.textAlign = 'right';
   ctx.textBaseline = 'top';
-  ctx.fillText(`⭐ ${score}`, cw - 20, 16);
+  ctx.fillText(`${score}`, cw - 20, 16);
   ctx.restore();
 }
 
@@ -82,6 +86,7 @@ export class ParticleSystem {
   }
 
   emit(x, y, count, options = {}) {
+    const sprites = options.sprites || ['sparkle'];
     for (let i = 0; i < count; i++) {
       this.particles.push({
         x, y,
@@ -90,9 +95,7 @@ export class ParticleSystem {
         life: 1,
         decay: 0.02 + Math.random() * 0.02,
         size: options.size || (10 + Math.random() * 20),
-        emoji: options.emojis
-          ? options.emojis[Math.floor(Math.random() * options.emojis.length)]
-          : '✨',
+        sprite: sprites[Math.floor(Math.random() * sprites.length)],
         gravity: options.gravity || 0,
       });
     }
@@ -112,10 +115,7 @@ export class ParticleSystem {
   draw(ctx) {
     for (const p of this.particles) {
       ctx.globalAlpha = Math.max(0, p.life);
-      ctx.font = `${p.size}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(p.emoji, p.x, p.y);
+      drawSprite(ctx, p.sprite, p.x, p.y, p.size);
     }
     ctx.globalAlpha = 1;
   }
