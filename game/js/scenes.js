@@ -329,7 +329,7 @@ export class StageClearScene {
       sfxTap();
       const cleared = this.game.state.clearedStages;
       const allCleared = STAGES.every(s => cleared.has(s.id));
-      if (this.stageId === 6 && allCleared) {
+      if (allCleared && (this.stageId === 6 || this.stageId === 8)) {
         this.game.setScene(new EndingScene(this.game));
       } else {
         this.game.setScene(new StageSelectScene(this.game));

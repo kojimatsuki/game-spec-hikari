@@ -10,7 +10,7 @@ export class Stage5Makeup {
   constructor(game) {
     this.game = game;
     this.count = 0;
-    this.goal = 15; // 15人にメイクすればクリア
+    this.goal = 1; // 1人にメイクすればクリア
     this.phase = 'makeup'; // makeup | result
     this.particles = new ParticleSystem();
     this.message = '';
@@ -66,7 +66,7 @@ export class Stage5Makeup {
 
     this.particles.draw(ctx);
     drawCounter(ctx, this.count, this.goal, 'メイク', cw);
-    hikari.drawWithBubble(ctx, 50, ch - 50, 30, this.messageTimer > 0 ? this.message : null);
+    hikari.drawWithBubble(ctx, 60, ch - 60, 50, this.messageTimer > 0 ? this.message : null);
 
     if (this.cleared) {
       ctx.fillStyle = 'rgba(0,0,0,0.5)';

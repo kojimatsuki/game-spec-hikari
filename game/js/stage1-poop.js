@@ -10,10 +10,10 @@ export class Stage1Poop {
   constructor(game) {
     this.game = game;
     this.count = 0;
-    this.goal = 100;
+    this.goal = 20;
     this.poops = [];
     this.spawnTimer = 0;
-    this.spawnInterval = 0.5;
+    this.spawnInterval = 0.15;
     this.particles = new ParticleSystem();
     this.message = '';
     this.messageTimer = 0;
@@ -33,7 +33,7 @@ export class Stage1Poop {
       this.spawnTimer = 0;
       this.spawnPoop();
       // 時間経過でスピードアップ
-      this.spawnInterval = Math.max(0.15, this.spawnInterval - 0.002);
+      this.spawnInterval = Math.max(0.05, this.spawnInterval - 0.003);
     }
 
     // 落下
@@ -101,7 +101,7 @@ export class Stage1Poop {
     drawCounter(ctx, this.count, this.goal, 'あつめた', cw);
 
     // ひかりちゃん
-    hikari.drawWithBubble(ctx, 50, ch - 60, 40, this.messageTimer > 0 ? this.message : null);
+    hikari.drawWithBubble(ctx, 60, ch - 70, 55, this.messageTimer > 0 ? this.message : null);
 
     // クリア演出
     if (this.cleared) {

@@ -252,7 +252,7 @@ export class SecretGhost {
     ctx.font = '12px sans-serif';
     ctx.fillText('タップで移動 / 隠れ場所でタップ=隠れる', cw / 2, ch - 40);
 
-    hikari.drawWithBubble(ctx, 50, 50, 30, this.messageTimer > 0 ? this.message : null);
+    hikari.drawWithBubble(ctx, 55, 50, 45, this.messageTimer > 0 ? this.message : null);
 
     // ゲームオーバー
     if (this.gameOver) {

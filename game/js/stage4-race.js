@@ -152,8 +152,8 @@ export class Stage4Race {
 
     // プレイヤー
     const vehicleSprite = this.isOnGround ? 'bike' : 'bird';
-    drawSprite(ctx, vehicleSprite, this.playerX, this.playerY, 40);
-    drawSprite(ctx, 'hikari', this.playerX, this.playerY - 30, 25);
+    drawSprite(ctx, vehicleSprite, this.playerX, this.playerY, 55);
+    drawSprite(ctx, 'hikari', this.playerX, this.playerY - 35, 35);
     if (!this.isOnGround) {
       this.particles.emit(this.playerX - 20, this.playerY + 10, 1, {
         sprites: ['sparkle'], spread: 20, size: 12,
@@ -179,7 +179,7 @@ export class Stage4Race {
     ctx.textBaseline = 'middle';
     ctx.fillText(`${Math.floor(ratio * 100)}%`, 28, 20);
 
-    hikari.drawWithBubble(ctx, 50, ch - 50, 30, this.messageTimer > 0 ? this.message : null);
+    hikari.drawWithBubble(ctx, 60, ch - 60, 50, this.messageTimer > 0 ? this.message : null);
 
     if (this.cleared) {
       ctx.fillStyle = 'rgba(0,0,0,0.5)';

@@ -11,7 +11,7 @@ export class Stage3Knife {
     this.game = game;
     this.phase = 'gacha'; // gacha | drumroll | reveal | chase
     this.count = 0;
-    this.goal = 100;
+    this.goal = 20;
     this.particles = new ParticleSystem();
     this.message = '';
     this.messageTimer = 0;
@@ -120,7 +120,7 @@ export class Stage3Knife {
     if (this.phase === 'chase') {
       drawCounter(ctx, this.count, this.goal, 'つかまえた', cw);
     }
-    hikari.drawWithBubble(ctx, 50, ch - 60, 35, this.messageTimer > 0 ? this.message : null);
+    hikari.drawWithBubble(ctx, 60, ch - 70, 55, this.messageTimer > 0 ? this.message : null);
 
     if (this.cleared) {
       ctx.fillStyle = 'rgba(0,0,0,0.5)';
@@ -174,11 +174,11 @@ export class Stage3Knife {
   drawChase(ctx, cw, ch) {
     for (const c of this.characters) {
       if (c.isPlayer) continue;
-      drawSprite(ctx, c.sprite, c.x, c.y, 35);
-      ctx.font = '12px sans-serif';
+      drawSprite(ctx, c.sprite, c.x, c.y, 50);
+      ctx.font = '14px sans-serif';
       ctx.fillStyle = '#FFF';
       ctx.textAlign = 'center';
-      ctx.fillText(c.name, c.x, c.y + 25);
+      ctx.fillText(c.name, c.x, c.y + 35);
     }
   }
 

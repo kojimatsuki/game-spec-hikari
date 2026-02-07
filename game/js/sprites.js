@@ -1527,6 +1527,327 @@ register('knife', (ctx, x, y, size) => {
 });
 
 // ============================================================
+// ステージ8: 鬼滅バトル (8種)
+// ============================================================
+
+register('tanjiro', (ctx, x, y, size) => {
+  const r = size / 2;
+  // 羽織（市松模様 緑黒）
+  ctx.fillStyle = '#2D8B4E';
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.6, y + r * 0.1);
+  ctx.lineTo(x - r * 0.75, y + r * 0.9);
+  ctx.lineTo(x + r * 0.75, y + r * 0.9);
+  ctx.lineTo(x + r * 0.6, y + r * 0.1);
+  ctx.closePath();
+  ctx.fill();
+  // 市松模様パッチ
+  ctx.fillStyle = '#1a1a1a';
+  const patchSize = r * 0.18;
+  for (let py = 0; py < 3; py++) {
+    for (let px = 0; px < 3; px++) {
+      if ((px + py) % 2 === 0) {
+        ctx.fillRect(x - r * 0.5 + px * patchSize, y + r * 0.15 + py * patchSize, patchSize, patchSize);
+      }
+    }
+  }
+  // 顔
+  ctx.fillStyle = '#FFDAB9';
+  ctx.beginPath();
+  ctx.arc(x, y - r * 0.15, r * 0.45, 0, Math.PI * 2);
+  ctx.fill();
+  // 黒髪
+  ctx.fillStyle = '#2B1A0E';
+  ctx.beginPath();
+  ctx.arc(x, y - r * 0.3, r * 0.42, Math.PI, 0);
+  ctx.fill();
+  // 額の傷
+  ctx.strokeStyle = '#CC3333';
+  ctx.lineWidth = Math.max(1, r * 0.06);
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.15, y - r * 0.4);
+  ctx.lineTo(x + r * 0.1, y - r * 0.25);
+  ctx.stroke();
+  // 目
+  ctx.fillStyle = '#8B2252';
+  ctx.beginPath();
+  ctx.arc(x - r * 0.15, y - r * 0.12, r * 0.06, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + r * 0.15, y - r * 0.12, r * 0.06, 0, Math.PI * 2);
+  ctx.fill();
+  // 口（キリッ）
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = Math.max(0.5, r * 0.03);
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.08, y + r * 0.05);
+  ctx.lineTo(x + r * 0.08, y + r * 0.05);
+  ctx.stroke();
+  // 耳飾り
+  ctx.fillStyle = '#FF4444';
+  ctx.beginPath();
+  ctx.arc(x - r * 0.42, y - r * 0.05, r * 0.05, 0, Math.PI * 2);
+  ctx.fill();
+});
+
+register('demon', (ctx, x, y, size) => {
+  const r = size / 2;
+  // 体
+  ctx.fillStyle = '#6B2D6B';
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.55, 0, Math.PI * 2);
+  ctx.fill();
+  // 角
+  ctx.fillStyle = '#8B0000';
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.2, y - r * 0.5);
+  ctx.lineTo(x - r * 0.1, y - r * 0.9);
+  ctx.lineTo(x, y - r * 0.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x + r * 0.2, y - r * 0.5);
+  ctx.lineTo(x + r * 0.3, y - r * 0.85);
+  ctx.lineTo(x + r * 0.4, y - r * 0.5);
+  ctx.closePath();
+  ctx.fill();
+  // 黄色い目
+  ctx.fillStyle = '#FFDD00';
+  ctx.beginPath();
+  ctx.arc(x - r * 0.2, y - r * 0.1, r * 0.1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + r * 0.2, y - r * 0.1, r * 0.1, 0, Math.PI * 2);
+  ctx.fill();
+  // 瞳
+  ctx.fillStyle = '#FF0000';
+  ctx.beginPath();
+  ctx.arc(x - r * 0.2, y - r * 0.1, r * 0.04, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + r * 0.2, y - r * 0.1, r * 0.04, 0, Math.PI * 2);
+  ctx.fill();
+  // 牙
+  ctx.fillStyle = '#FFF';
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.15, y + r * 0.15);
+  ctx.lineTo(x - r * 0.1, y + r * 0.35);
+  ctx.lineTo(x - r * 0.05, y + r * 0.15);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x + r * 0.05, y + r * 0.15);
+  ctx.lineTo(x + r * 0.1, y + r * 0.35);
+  ctx.lineTo(x + r * 0.15, y + r * 0.15);
+  ctx.closePath();
+  ctx.fill();
+});
+
+register('demon-boss', (ctx, x, y, size) => {
+  const r = size / 2;
+  // 紫オーラ
+  ctx.fillStyle = 'rgba(128,0,255,0.2)';
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.9, 0, Math.PI * 2);
+  ctx.fill();
+  // 体
+  ctx.fillStyle = '#4B0082';
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.6, 0, Math.PI * 2);
+  ctx.fill();
+  // 角3本
+  ctx.fillStyle = '#8B0000';
+  const hornPositions = [-0.25, 0, 0.25];
+  for (const hx of hornPositions) {
+    ctx.beginPath();
+    ctx.moveTo(x + hx * r - r * 0.06, y - r * 0.55);
+    ctx.lineTo(x + hx * r, y - r * 0.95);
+    ctx.lineTo(x + hx * r + r * 0.06, y - r * 0.55);
+    ctx.closePath();
+    ctx.fill();
+  }
+  // 3つの目
+  ctx.fillStyle = '#FFDD00';
+  ctx.beginPath();
+  ctx.arc(x - r * 0.25, y - r * 0.1, r * 0.1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x, y - r * 0.2, r * 0.08, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + r * 0.25, y - r * 0.1, r * 0.1, 0, Math.PI * 2);
+  ctx.fill();
+  // 瞳
+  ctx.fillStyle = '#FF0000';
+  for (const ex of [-0.25, 0, 0.25]) {
+    ctx.beginPath();
+    ctx.arc(x + ex * r, ex === 0 ? y - r * 0.2 : y - r * 0.1, r * 0.04, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // 口（裂け）
+  ctx.strokeStyle = '#FF0000';
+  ctx.lineWidth = Math.max(1, r * 0.04);
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.3, y + r * 0.2);
+  ctx.quadraticCurveTo(x, y + r * 0.35, x + r * 0.3, y + r * 0.2);
+  ctx.stroke();
+});
+
+register('water-slash', (ctx, x, y, size) => {
+  const r = size / 2;
+  ctx.strokeStyle = '#4488FF';
+  ctx.lineWidth = Math.max(2, r * 0.15);
+  ctx.lineCap = 'round';
+  ctx.globalAlpha = 0.8;
+  // 3本の弧状の斬撃
+  for (let i = 0; i < 3; i++) {
+    const offset = (i - 1) * r * 0.25;
+    ctx.beginPath();
+    ctx.arc(x, y + offset, r * 0.7, Math.PI * 0.8, Math.PI * 0.2, true);
+    ctx.stroke();
+  }
+  // 水しぶき
+  ctx.fillStyle = '#88CCFF';
+  for (let i = 0; i < 5; i++) {
+    const angle = (i / 5) * Math.PI * 2;
+    const dx = Math.cos(angle) * r * 0.5;
+    const dy = Math.sin(angle) * r * 0.3;
+    ctx.beginPath();
+    ctx.arc(x + dx, y + dy, r * 0.06, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+});
+
+register('thunder-slash', (ctx, x, y, size) => {
+  const r = size / 2;
+  ctx.fillStyle = '#FFD700';
+  ctx.globalAlpha = 0.9;
+  // 稲妻型斬撃
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.1, y - r * 0.8);
+  ctx.lineTo(x + r * 0.3, y - r * 0.2);
+  ctx.lineTo(x + r * 0.05, y - r * 0.15);
+  ctx.lineTo(x + r * 0.4, y + r * 0.6);
+  ctx.lineTo(x + r * 0.1, y + r * 0.1);
+  ctx.lineTo(x - r * 0.15, y + r * 0.15);
+  ctx.lineTo(x - r * 0.1, y - r * 0.8);
+  ctx.closePath();
+  ctx.fill();
+  // 光のハイライト
+  ctx.fillStyle = '#FFFFAA';
+  ctx.beginPath();
+  ctx.moveTo(x, y - r * 0.5);
+  ctx.lineTo(x + r * 0.15, y - r * 0.1);
+  ctx.lineTo(x - r * 0.05, y - r * 0.05);
+  ctx.lineTo(x + r * 0.2, y + r * 0.35);
+  ctx.lineTo(x + r * 0.05, y + r * 0.1);
+  ctx.lineTo(x - r * 0.05, y + r * 0.1);
+  ctx.closePath();
+  ctx.fill();
+  ctx.globalAlpha = 1;
+});
+
+register('fire-slash', (ctx, x, y, size) => {
+  const r = size / 2;
+  ctx.globalAlpha = 0.85;
+  // 外炎
+  ctx.fillStyle = '#FF4400';
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.7, Math.PI * 0.7, Math.PI * 0.3, true);
+  ctx.quadraticCurveTo(x + r * 0.3, y + r * 0.5, x, y + r * 0.3);
+  ctx.quadraticCurveTo(x - r * 0.3, y + r * 0.5, x, y);
+  ctx.closePath();
+  ctx.fill();
+  // 内炎
+  ctx.fillStyle = '#FF8800';
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.45, Math.PI * 0.8, Math.PI * 0.2, true);
+  ctx.quadraticCurveTo(x + r * 0.15, y + r * 0.3, x, y + r * 0.15);
+  ctx.quadraticCurveTo(x - r * 0.15, y + r * 0.3, x, y);
+  ctx.closePath();
+  ctx.fill();
+  // 中心
+  ctx.fillStyle = '#FFCC00';
+  ctx.beginPath();
+  ctx.arc(x, y - r * 0.1, r * 0.15, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+});
+
+register('katana', (ctx, x, y, size) => {
+  const r = size / 2;
+  // 刀身（黒）
+  ctx.fillStyle = '#222';
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.03, y - r * 0.85);
+  ctx.lineTo(x + r * 0.06, y - r * 0.85);
+  ctx.lineTo(x + r * 0.06, y + r * 0.15);
+  ctx.lineTo(x - r * 0.03, y + r * 0.15);
+  ctx.closePath();
+  ctx.fill();
+  // 刃先（先端カーブ）
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.03, y - r * 0.85);
+  ctx.quadraticCurveTo(x + r * 0.015, y - r * 0.95, x + r * 0.06, y - r * 0.85);
+  ctx.fill();
+  // 刃文（白いライン）
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = Math.max(0.5, r * 0.02);
+  ctx.beginPath();
+  ctx.moveTo(x + r * 0.05, y - r * 0.8);
+  ctx.lineTo(x + r * 0.05, y + r * 0.1);
+  ctx.stroke();
+  // 鍔（つば）
+  ctx.fillStyle = '#888';
+  ctx.fillRect(x - r * 0.12, y + r * 0.12, r * 0.27, r * 0.06);
+  // 柄（白）
+  ctx.fillStyle = '#F5F5F5';
+  ctx.fillRect(x - r * 0.05, y + r * 0.18, r * 0.13, r * 0.55);
+  // 柄巻き（菱形模様）
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = Math.max(0.5, r * 0.02);
+  for (let i = 0; i < 5; i++) {
+    const py = y + r * 0.22 + i * r * 0.1;
+    ctx.beginPath();
+    ctx.moveTo(x - r * 0.05, py);
+    ctx.lineTo(x + r * 0.08, py + r * 0.05);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x + r * 0.08, py);
+    ctx.lineTo(x - r * 0.05, py + r * 0.05);
+    ctx.stroke();
+  }
+});
+
+register('breath-circle', (ctx, x, y, size) => {
+  const r = size / 2;
+  // 外円
+  ctx.strokeStyle = 'rgba(100,200,255,0.6)';
+  ctx.lineWidth = Math.max(2, r * 0.08);
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.8, 0, Math.PI * 2);
+  ctx.stroke();
+  // 内円のターゲット
+  ctx.strokeStyle = 'rgba(255,200,50,0.8)';
+  ctx.lineWidth = Math.max(1.5, r * 0.06);
+  ctx.setLineDash([r * 0.1, r * 0.08]);
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.4, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // 中央の十字
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = Math.max(0.5, r * 0.03);
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.15, y);
+  ctx.lineTo(x + r * 0.15, y);
+  ctx.moveTo(x, y - r * 0.15);
+  ctx.lineTo(x, y + r * 0.15);
+  ctx.stroke();
+});
+
+// ============================================================
 // エイリアス（同じスプライトを別名で参照）
 // ============================================================
 register('rainbow-icon', (ctx, x, y, size, opts) => registry['rainbow'](ctx, x, y, size, opts));

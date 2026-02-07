@@ -10,7 +10,7 @@ export class Stage2Worm {
   constructor(game) {
     this.game = game;
     this.count = 0;
-    this.goal = 100;
+    this.goal = 20;
     this.worms = [];
     this.particles = new ParticleSystem();
     this.message = '';
@@ -107,7 +107,7 @@ export class Stage2Worm {
 
     this.particles.draw(ctx);
     drawCounter(ctx, this.count, this.goal, 'きった', cw);
-    hikari.drawWithBubble(ctx, 50, ch - 60, 40, this.messageTimer > 0 ? this.message : null);
+    hikari.drawWithBubble(ctx, 60, ch - 70, 55, this.messageTimer > 0 ? this.message : null);
 
     if (this.cleared) {
       ctx.fillStyle = 'rgba(0,0,0,0.5)';

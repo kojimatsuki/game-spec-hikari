@@ -15,7 +15,7 @@ export class Stage6Flush {
     this.cleared = false;
 
     this.flushCount = 0;
-    this.flushGoal = 50;
+    this.flushGoal = 20;
     this.phase = 'flush'; // flush | collapse | clear
 
     // 浮遊アイテム
@@ -179,7 +179,7 @@ export class Stage6Flush {
 
     this.particles.draw(ctx);
     if (this.phase === 'flush') {
-      hikari.drawWithBubble(ctx, 50, ch - 50, 30, this.messageTimer > 0 ? this.message : null);
+      hikari.drawWithBubble(ctx, 60, ch - 60, 50, this.messageTimer > 0 ? this.message : null);
     }
 
     if (this.shakeTimer > 0) ctx.restore();

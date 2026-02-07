@@ -7,25 +7,25 @@ export const STAGES = [
     id: 1,
     name: 'うんこ集め',
     sprite: 'poop',
-    description: 'うんこを100個集めろ！',
+    description: 'うんこを20個集めろ！',
     colorTheme: { bg: '#8B6914', accent: '#FFD700' },
-    goal: 100,
+    goal: 20,
   },
   {
     id: 2,
     name: 'ミミズ切り',
     sprite: 'worm-head',
-    description: 'ミミズを100匹切れ！',
+    description: 'ミミズを20匹切れ！',
     colorTheme: { bg: '#2E5A1E', accent: '#8B6914' },
-    goal: 100,
+    goal: 20,
   },
   {
     id: 3,
     name: '包丁ゲーム',
     sprite: 'swords',
-    description: 'ガチャで鬼を決めて100回タッチ！',
+    description: 'ガチャで鬼を決めて20回タッチ！',
     colorTheme: { bg: '#CC3300', accent: '#FF8800' },
-    goal: 100,
+    goal: 20,
   },
   {
     id: 4,
@@ -39,9 +39,9 @@ export const STAGES = [
     id: 5,
     name: '変なメイク',
     sprite: 'lipstick',
-    description: '変なメイクを100回やったら勝ち！',
+    description: '変なメイクで1人変身させたら勝ち！',
     colorTheme: { bg: '#FF69B4', accent: '#FFD700' },
-    goal: 100,
+    goal: 1,
   },
   {
     id: 6,
@@ -49,6 +49,14 @@ export const STAGES = [
     sprite: 'toilet',
     description: '全部まとめて流しちゃえ！',
     colorTheme: { bg: '#87CEEB', accent: '#FFFFFF' },
+    goal: null,
+  },
+  {
+    id: 8,
+    name: '鬼滅バトル',
+    sprite: 'katana',
+    description: '鬼を倒せ！全集中！',
+    colorTheme: { bg: '#1a0033', accent: '#FF4444' },
     goal: null,
   },
 ];
@@ -63,15 +71,15 @@ export const SECRET_STAGE = {
 
 export const HIKARI_REACTIONS = {
   stage1: {
-    10: 'がんばる！',
-    50: '半分きた！くさーい！',
-    90: 'もうちょっと！',
-    100: 'やったー！クリア！',
+    5: 'がんばる！',
+    10: '半分きた！くさーい！',
+    18: 'もうちょっと！',
+    20: 'やったー！クリア！',
   },
   stage2: {
     start: 'きゃー！ミミズ！',
-    50: '切っても切っても増えるー！',
-    100: '100匹いったー！もう見たくない！',
+    10: '切っても切っても増えるー！',
+    20: '20匹いったー！もう見たくない！',
   },
   stage3: {
     gachaStart: 'ドキドキ…誰が鬼かな？',
@@ -99,6 +107,13 @@ export const HIKARI_REACTIONS = {
     start: 'こわい…でもがんばる！',
     found: 'みーつけた！',
     clear: '色々の世界を抜け出した！伝説のプレイヤー！',
+  },
+  stage8: {
+    start: '全集中！鬼を倒すぞ！',
+    kill: 'やった！倒した！',
+    enemyAttack: '来る！防御して！',
+    lose: 'うぅ…やられちゃった…',
+    clear: '全集中・完全勝利！かっこいい〜！',
   },
 };
 
