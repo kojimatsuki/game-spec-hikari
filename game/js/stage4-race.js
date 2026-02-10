@@ -129,7 +129,8 @@ export class Stage4Race {
           this.showMessage(HIKARI_REACTIONS.stage4.goal);
           stopBGM();
         } else if (obj.type === 'mountain' && this.isOnGround) {
-          this.distance -= 20;
+          this.distance = Math.max(0, this.distance - 20);
+          this.objects.splice(i, 1);
         }
       }
     }

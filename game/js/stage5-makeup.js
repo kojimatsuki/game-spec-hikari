@@ -193,9 +193,10 @@ export class Stage5Makeup {
     }
 
     const reactions = ['え…これ私？', 'すごい顔…', '…芸術的！'];
+    const reactionIndex = Math.max(0, Math.min(stars - 1, reactions.length - 1));
     ctx.font = '20px sans-serif';
     ctx.fillStyle = '#FFF';
-    ctx.fillText(reactions[Math.min(stars - 1, 2)], cw / 2, ch * 0.5);
+    ctx.fillText(reactions[reactionIndex], cw / 2, ch * 0.5);
 
     const btnW = 160, btnH = 44;
     drawButton(ctx, '次の人へ ▶', cw / 2 - btnW / 2, ch * 0.65, btnW, btnH, '#4CAF50');

@@ -464,6 +464,10 @@ export class Stage9Fart {
       this.fartClouds = [];
       this.invincible = 0;
       this.ufo = null;
+      this.spawnTimer = 0;
+      this.spawnInterval = 1.2;
+      this.ufoTimer = 0;
+      this.fartCooldown = 0;
       startBGM(9);
       this.showMessage(HIKARI_REACTIONS.stage9.start);
       return;

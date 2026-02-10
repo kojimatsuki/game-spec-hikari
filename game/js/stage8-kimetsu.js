@@ -56,6 +56,7 @@ export class Stage8Kimetsu {
     // 防御
     this.defendWindow = 0;
     this.defendSuccess = false;
+    this.postDefendTimer = 0;
 
     // 斬撃エフェクト
     this.slashEffect = null;
@@ -118,7 +119,20 @@ export class Stage8Kimetsu {
         this.defendSuccess = false;
       }
     } else if (this.phase === 'defend') {
-      this.defendWindow -= dt;
+      if (this.defendSuccess) {
+        this.postDefendTimer -= dt;
+        if (this.postDefendTimer <= 0) {
+          if (this.playerHp <= 0) {
+            this.phase = 'lose';
+            this.showMessage(HIKARI_REACTIONS.stage8.lose);
+            stopBGM();
+          } else {
+            this.phase = 'select';
+          }
+        }
+      } else {
+        this.defendWindow -= dt;
+      }
       if (this.defendWindow <= 0 && !this.defendSuccess) {
         // 防御失敗
         const dmg = this.enemy.atk;
@@ -447,7 +461,7 @@ export class Stage8Kimetsu {
       else if (diff <= GOOD_RANGE) accuracy = 1;
       this.applyDamage(accuracy);
     } else if (this.phase === 'defend') {
-      if (this._defendBtnRect && isInRect(x, y, ...this._defendBtnRect)) {
+      if (!this.defendSuccess && this._defendBtnRect && isInRect(x, y, ...this._defendBtnRect)) {
         // 防御成功
         this.defendSuccess = true;
         sfxCollect();
@@ -459,15 +473,7 @@ export class Stage8Kimetsu {
         });
         this.showMessage('全集中！');
         // 少し待ってからselectへ
-        setTimeout(() => {
-          if (this.playerHp <= 0) {
-            this.phase = 'lose';
-            this.showMessage(HIKARI_REACTIONS.stage8.lose);
-            stopBGM();
-          } else {
-            this.phase = 'select';
-          }
-        }, 800);
+        this.postDefendTimer = 0.8;
       }
     }
   }

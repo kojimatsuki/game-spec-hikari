@@ -72,9 +72,9 @@ export class Stage2Worm {
       this.worms.splice(0, this.worms.length - 40);
     }
 
-    if (this.count >= 50 && !this._said50) {
-      this._said50 = true;
-      this.showMessage(HIKARI_REACTIONS.stage2[50]);
+    if (this.count >= 10 && !this._said10) {
+      this._said10 = true;
+      this.showMessage(HIKARI_REACTIONS.stage2[10]);
     }
     if (this.worms.length > 30 && !this._saidMany) {
       this._saidMany = true;
@@ -185,7 +185,7 @@ export class Stage2Worm {
 
         if (this.count >= this.goal) {
           this.cleared = true;
-          this.showMessage(HIKARI_REACTIONS.stage2[100]);
+          this.showMessage(HIKARI_REACTIONS.stage2[20]);
           stopBGM();
         }
         return;
